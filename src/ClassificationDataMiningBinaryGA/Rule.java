@@ -1,4 +1,4 @@
-package ComplexGA;
+package ClassificationDataMiningBinaryGA;
 
 /**
  *
@@ -6,7 +6,7 @@ package ComplexGA;
  */
 public class Rule {
 
-    public int conditionSize = 5;
+    public int conditionSize = 6;
     public int[] condition;
     public int output;
 

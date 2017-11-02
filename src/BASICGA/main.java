@@ -1,6 +1,6 @@
 package BasicGA;
 
-import static ComplexGA.main.populationSize;
+import static ClassificationDataMiningBinaryGA.main.populationSize;
 import java.util.Arrays;
 import java.util.Random;
 

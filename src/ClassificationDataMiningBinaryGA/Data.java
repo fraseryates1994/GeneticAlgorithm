@@ -1,12 +1,12 @@
 
-package ComplexGA;
+package ClassificationDataMiningBinaryGA;
 
 /**
  *
  * @author Fraser
  */
 public class Data {
-    public int variableSize = 5;
+    public int variableSize = 6;
     public int variables[];
     public int output;
 

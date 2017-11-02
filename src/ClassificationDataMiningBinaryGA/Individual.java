@@ -1,5 +1,5 @@
 
-package ComplexGA;
+package ClassificationDataMiningBinaryGA;
 
 
 import java.util.Arrays;
@@ -10,7 +10,7 @@ import java.util.Arrays;
  */
 public class Individual {
 
-    public int geneSize = 60;
+    public int geneSize = 70;
     int genes[];
     int fitness;
 
