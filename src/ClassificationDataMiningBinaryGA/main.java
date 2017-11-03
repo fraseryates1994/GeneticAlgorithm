@@ -10,30 +10,33 @@ import java.util.Scanner;
  */
 public class main {
 
-    public static int populationSize = 60;
-    public static double mutationRate = 0.002;
+    public static int populationSize = 600;
+    public static double mutationRate = 0.025;
     public static double crossoverRate = 0.7;
     public static int totalFitness = 0;
     public static int iteration = 1;
-    public static int ruleSize = 8;
+    public static int ruleSize = 5;
     public static int dataSize = 64;
     public static int totalIterations = 1000;
     public static String data = "data2.txt";
 
     public static void main(String[] args) {
         Individual population[] = new Individual[populationSize];
+        Data dataSet[] = new Data[dataSize];
 
+        dataSet = readData();
+        
         initiate(population);
-        evaluateFitness(population);
+        evaluateFitness(population, dataSet);
         printGenes(population);
 
         while (!solutionFound(population)) {
             tournamentSelection(population);
-            evaluateFitness(population);
+            evaluateFitness(population, dataSet);
             crossover(population);
-            evaluateFitness(population);
+            evaluateFitness(population, dataSet);
             mutate(population);
-            evaluateFitness(population);
+            evaluateFitness(population, dataSet);
 
             // Print most fit individual
             System.out.println("Generation " + iteration + ". Fittest gene = " + getFittest(population).fitness);
@@ -83,13 +86,13 @@ public class main {
         System.out.println("Total Fitness: " + totalFitness);
     }
 
-    public static void evaluateFitness(Individual[] population) {
+    public static void evaluateFitness(Individual[] population, Data[] dataSet) {
         for (int i = 0; i < populationSize; i++) {
-            evaluateIndFitness(population[i]);
+            evaluateIndFitness(population[i], dataSet);
         }
     }
 
-    public static void evaluateIndFitness(Individual individual) {
+    public static void evaluateIndFitness(Individual individual, Data[] dataSet) {
         Rule ruleBase[] = new Rule[ruleSize];
         int k = 0;
         individual.fitness = 0;
@@ -103,6 +106,20 @@ public class main {
             ruleBase[i].output = individual.genes[k++];
         }
 
+        // Incremement if rule = condition from txt file
+        for (Data dataSet1 : dataSet) {
+            for (Rule ruleBase1 : ruleBase) {
+                if (matchesCondition(dataSet1, ruleBase1, dataSet1.variables.length)) {
+                    if (matchesOutput(dataSet1, ruleBase1)) {
+                        individual.fitness++;
+                    }
+                    break;
+                }
+            }
+        }
+    }
+    
+    public static Data[] readData(){
         // Read from txt files
         Data dataSet[] = new Data[dataSize];
         Scanner scan = new Scanner(main.class.getResourceAsStream(data));
@@ -116,18 +133,7 @@ public class main {
             dataSet[i].output = scan.nextByte();
             scan.nextLine();
         }
-
-        // Incremement if rule = condition from txt file
-        for (Data dataSet1 : dataSet) {
-            for (Rule ruleBase1 : ruleBase) {
-                if (matchesCondition(dataSet1, ruleBase1, dataSet1.variables.length)) {
-                    if (matchesOutput(dataSet1, ruleBase1)) {
-                        individual.fitness++;
-                    }
-                    break;
-                }
-            }
-        }
+        return dataSet;
     }
 
     public static boolean matchesCondition(Data inputData, Rule rule, int loopSize) {
@@ -149,7 +155,7 @@ public class main {
         //mutation
         for (int i = 0; i != populationSize; ++i) {
             for (int j = 0; j != population[i].geneSize; ++j) {
-                if (i % (rule.conditionSize+1) != (rule.conditionSize)) {
+                if (j % (rule.conditionSize + 1) != (rule.conditionSize)) {
                     if (mutationRate * 100 > rand.nextInt(101)) {
                         switch (population[i].genes[j]) {
                             case 0:
@@ -175,6 +181,30 @@ public class main {
                                 break;
                             default:
                                 break;
+                        }
+                    }
+                } else {
+                    // mutate output
+                    if (population[i].genes[j] == 2) {
+                        if (Math.random() < 0.5) {
+                            population[i].genes[j] = 0;
+                        } else {
+                            population[i].genes[j] = 1;
+                        }
+                    }
+                    if (mutationRate * 100 > rand.nextInt(101)) {
+                        if (population[i].genes[j] == 1) {
+                            if (Math.random() < 0.5) {
+                                population[i].genes[j] = 0;
+                            } else {
+                                population[i].genes[j] = 1;
+                            }
+                        } else if (population[i].genes[j] == 0) {
+                            if (Math.random() < 0.5) {
+                                population[i].genes[j] = 0;
+                            } else {
+                                population[i].genes[j] = 1;
+                            }
                         }
                     }
                 }

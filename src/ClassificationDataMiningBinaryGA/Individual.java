@@ -10,7 +10,7 @@ import java.util.Arrays;
  */
 public class Individual {
 
-    public int geneSize = 70;
+    public int geneSize = 35;
     int genes[];
     int fitness;
 
