@@ -1,5 +1,6 @@
-package ClassificationDataMiningBinaryGA;
+package ClassificationDataMiningFloatGA;
 
+import ClassificationDataMiningBinaryGA.*;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
@@ -10,15 +11,15 @@ import java.util.Scanner;
  */
 public class main {
 
-    public static int populationSize = 1000;
-    public static double mutationRate = 0.025;
+    public static int populationSize = 600;
+    public static double mutationRate = 0.002;
     public static double crossoverRate = 0.7;
     public static int totalFitness = 0;
     public static int iteration = 1;
-    public static int ruleSize = 5;
+    public static int ruleSize = 10;
     public static int dataSize = 64;
     public static int totalIterations = 1000;
-    public static String data = "data2.txt";
+    public static String data = "data3.txt";
 
     public static void main(String[] args) {
         Individual population[] = new Individual[populationSize];
@@ -30,10 +31,7 @@ public class main {
         evaluateFitness(population, dataSet);
         printGenes(population);
 
-        while (iteration < totalIterations) {
-            if (solutionFound(population)) {
-                break;
-            }
+        while (!solutionFound(population)) {
             tournamentSelection(population);
             evaluateFitness(population, dataSet);
             crossover(population);
