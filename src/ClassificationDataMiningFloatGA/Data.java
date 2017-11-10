@@ -9,11 +9,11 @@ import ClassificationDataMiningBinaryGA.*;
  */
 public class Data {
     public int variableSize = 6;
-    public int variables[];
+    public float variables[];
     public int output;
 
     public Data() {
-        variables = new int[variableSize];
+        variables = new float[variableSize];
         output = 0;
     }
 

@@ -1,9 +1,16 @@
 package ClassificationDataMiningFloatGA;
 
-import ClassificationDataMiningBinaryGA.*;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -17,7 +24,7 @@ public class main {
     public static int totalFitness = 0;
     public static int iteration = 1;
     public static int ruleSize = 10;
-    public static int dataSize = 64;
+    public static int dataSize = 2000;
     public static int totalIterations = 1000;
     public static String data = "data3.txt";
 
@@ -26,7 +33,7 @@ public class main {
         Data dataSet[] = new Data[dataSize];
 
         dataSet = readData();
-        
+
         initiate(population);
         evaluateFitness(population, dataSet);
         printGenes(population);
@@ -36,7 +43,7 @@ public class main {
             evaluateFitness(population, dataSet);
             crossover(population);
             evaluateFitness(population, dataSet);
-            mutate(population);
+            // mutate(population);
             evaluateFitness(population, dataSet);
 
             // Print most fit individual
@@ -104,7 +111,7 @@ public class main {
             for (int j = 0; j < ruleBase[i].conditionSize; j++) {
                 ruleBase[i].condition[j] = individual.genes[k++];
             }
-            ruleBase[i].output = individual.genes[k++];
+            ruleBase[i].output = (int) individual.genes[k++];
         }
 
         // Incremement if rule = condition from txt file
@@ -119,20 +126,19 @@ public class main {
             }
         }
     }
-    
-    public static Data[] readData(){
+
+    public static Data[] readData() {
         // Read from txt files
         Data dataSet[] = new Data[dataSize];
         Scanner scan = new Scanner(main.class.getResourceAsStream(data));
-        scan.useDelimiter("");
+        scan.useLocale(Locale.US);
         for (int i = 0; scan.hasNext(); i++) {
             dataSet[i] = new Data();
             for (int j = 0; j < dataSet[i].variableSize; j++) {
-                dataSet[i].variables[j] = scan.nextByte();
+
+                dataSet[i].variables[j] = scan.nextFloat();
             }
-            scan.next();
-            dataSet[i].output = scan.nextByte();
-            scan.nextLine();
+            dataSet[i].output = scan.nextInt();
         }
         return dataSet;
     }
@@ -258,11 +264,28 @@ public class main {
     }
 
     public static void initiate(Individual[] population) {
+        Random rand = new Random();
+        Rule rule = new Rule();
+        int k = 0;
         // Populating initial random population
         for (int i = 0; i < populationSize; i++) {
             population[i] = new Individual();
             for (int j = 0; j < population[i].geneSize; j++) {
-                population[i].genes[j] = (int) Math.round(Math.random());
+                // Test to see if evaluate fitness function is working
+//                population[i].genes[j++] = (float) 0.981136;
+//                population[i].genes[j++] = (float) 0.369132;
+//                population[i].genes[j++] = (float) 0.498354;
+//                population[i].genes[j++] = (float) 0.067417;
+//                population[i].genes[j++] = (float) 0.422276;
+//                population[i].genes[j++] = (float) 0.803662;
+//                population[i].genes[j] = 0;
+                population[i].genes[j++] = rand.nextFloat();
+                population[i].genes[j++] = rand.nextFloat();
+                population[i].genes[j++] = rand.nextFloat();
+                population[i].genes[j++] = rand.nextFloat();
+                population[i].genes[j++] = rand.nextFloat();
+                population[i].genes[j++] = rand.nextFloat();
+                population[i].genes[j] = 0;
             }
         }
     }

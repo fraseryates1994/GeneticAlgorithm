@@ -12,11 +12,11 @@ import java.util.Arrays;
 public class Individual {
 
     public int geneSize = 70;
-    int genes[];
+    float genes[];
     int fitness;
 
     public Individual() {
-        genes = new int[geneSize];
+        genes = new float[geneSize];
         fitness = 0;
     }
 

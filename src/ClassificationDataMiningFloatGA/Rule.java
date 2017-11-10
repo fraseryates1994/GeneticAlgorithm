@@ -9,11 +9,11 @@ import ClassificationDataMiningBinaryGA.*;
 public class Rule {
 
     public int conditionSize = 6;
-    public int[] condition;
+    public float[] condition;
     public int output;
 
     public Rule() {
-        condition = new int[conditionSize];
+        condition = new float[conditionSize];
         output = 0;
     }
 
