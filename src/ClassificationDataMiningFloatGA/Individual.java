@@ -11,7 +11,7 @@ import java.util.Arrays;
  */
 public class Individual {
 
-    public int geneSize = 70;
+    public int geneSize = (((6 * 2) + 1) * 10);
     float genes[];
     int fitness;
 

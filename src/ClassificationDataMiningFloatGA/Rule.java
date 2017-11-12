@@ -8,7 +8,7 @@ import ClassificationDataMiningBinaryGA.*;
  */
 public class Rule {
 
-    public int conditionSize = 6;
+    public int conditionSize = 12;
     public float[] condition;
     public int output;
 
