@@ -17,15 +17,19 @@ public class main {
     public static int totalFitness = 0;
     public static int iteration = 1;
     public static int ruleSize = 10;
-    public static int dataSize = 2000;
+    public static int dataSize = 1000;
     public static int totalIterations = 1000;
-    public static String data = "data3.txt";
+    public static String trainingData = "data3.txt";
+    public static String validationData = "data3validation.txt";
 
     public static void main(String[] args) {
         Individual population[] = new Individual[populationSize];
         Data dataSet[] = new Data[dataSize];
+        Data validationDataSet[] = new Data[dataSize];
 
-        dataSet = readData();
+        dataSet = readData(trainingData);
+        validationDataSet = readData(validationData);
+
         initiate(population);
         evaluateFitness(population, dataSet);
         printGenes(population);
@@ -38,26 +42,39 @@ public class main {
             mutate(population);
             evaluateFitness(population, dataSet);
 
-            // Print most fit individual
             Individual fittest = getFittest(population);
-            System.out.println(fittest);
-            System.out.println("Generation " + iteration + ". Fittest gene = " + fittest.fitness);
+            Individual toValidate = clone(fittest);
+            evaluateIndFitness(toValidate, validationDataSet);
+
+            System.out.println("Training Data  : Generation " + iteration + ". Fittest gene = " + fittest.fitness
+                    + "\nValidation Data: Generation " + iteration + ". fittest gene = " + toValidate.fitness);
             iteration++;
         }
-        // Print when solution has been found
+        // Print if solution is found
         System.out.println("Generation = " + (iteration - 1));
         System.out.println("Best Individual = " + getFittest(population));
-        //seperateRules(population);
     }
 
     public static boolean solutionFound(Individual population[]) {
         for (int i = 0; i < populationSize; i++) {
-            if (population[i].fitness == 2000) {
+            if (population[i].fitness == 1000) {
                 System.out.println("Solution Found!");
                 return true;
             }
         }
         return false;
+    }
+
+    public static Individual clone(Individual individualToCopy) {
+        float[] temp = new float[individualToCopy.geneSize];
+        Individual twin = new Individual();
+        for (int i = 0; i < temp.length; i++) {
+            temp[i] = individualToCopy.genes[i];
+            twin.genes[i] = temp[i];
+        }
+        twin.fitness = individualToCopy.fitness;
+
+        return twin;
     }
 
     public static Individual getFittest(Individual population[]) {
@@ -113,7 +130,7 @@ public class main {
         }
     }
 
-    public static Data[] readData() {
+    public static Data[] readData(String data) {
         // Read from txt files
         Data dataSet[] = new Data[dataSize];
         Scanner scan = new Scanner(main.class.getResourceAsStream(data));
@@ -153,16 +170,21 @@ public class main {
     public static void mutate(Individual[] population) {
         Random rand = new Random();
         Rule rule = new Rule();
+        boolean test = true;
         //mutation
         for (int i = 0; i != populationSize; ++i) {
             for (int j = 0; j != population[i].geneSize; ++j) {
                 if (j % (rule.conditionSize + 1) != (rule.conditionSize)) {
                     if (mutationRate * 100 > rand.nextInt(101)) {
-                        float mutateNum = rand.nextFloat();
-                        if ((population[i].genes[j] + mutateNum < 1)) {
-                            population[i].genes[j] = population[i].genes[j] + mutateNum;
-                        } else {
-                            population[i].genes[j] = population[i].genes[j] - mutateNum;
+                        while (true) {
+                            float mutateNum = rand.nextFloat();
+                            if ((population[i].genes[j] + mutateNum < 1)) {
+                                population[i].genes[j] = population[i].genes[j] + mutateNum;
+                                break;
+                            } else if (population[i].genes[j] - mutateNum > 0) {
+                                population[i].genes[j] = population[i].genes[j] - mutateNum;
+                                break;
+                            }
                         }
                     }
                 } else {
