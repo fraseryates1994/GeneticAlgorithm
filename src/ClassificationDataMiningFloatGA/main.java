@@ -16,11 +16,12 @@ public class main {
     public static double crossoverRate = 0.7;
     public static int totalFitness = 0;
     public static int iteration = 1;
-    public static int ruleSize = 10;
+    public static int ruleSize = 5;
     public static int dataSize = 1000;
     public static int totalIterations = 1000;
     public static String trainingData = "data3.txt";
     public static String validationData = "data3validation.txt";
+    public static Individual bestIndividual = new Individual();
 
     public static void main(String[] args) {
         Individual population[] = new Individual[populationSize];
@@ -43,6 +44,7 @@ public class main {
             evaluateFitness(population, dataSet);
 
             Individual fittest = getFittest(population);
+            setFittest(fittest);
             Individual toValidate = clone(fittest);
             evaluateIndFitness(toValidate, validationDataSet);
 
@@ -52,7 +54,9 @@ public class main {
         }
         // Print if solution is found
         System.out.println("Generation = " + (iteration - 1));
-        System.out.println("Best Individual = " + getFittest(population));
+        System.out.println("Best Individual = " + bestIndividual.fitness);
+        System.out.println("Rules:");
+        seperateRules(bestIndividual);
     }
 
     public static boolean solutionFound(Individual population[]) {
@@ -63,6 +67,28 @@ public class main {
             }
         }
         return false;
+    }
+    
+    public static void setFittest(Individual individual) {
+        if (individual.fitness > bestIndividual.fitness) {
+            for (int i = 0; i < individual.geneSize; i++) {
+                bestIndividual.genes[i] = individual.genes[i];
+            }
+            bestIndividual.fitness = individual.fitness;
+        }
+    }
+    
+    public static void seperateRules(Individual individual) {
+        int m = 0;
+        Rule[] ruleBase = new Rule[ruleSize];
+        for (int i = 0; i < ruleSize; i++) {
+            ruleBase[i] = new Rule();
+            for (int j = 0; j < ruleBase[i].conditionSize; j++) {
+                System.out.print(individual.genes[m++] + " ");
+            }
+            System.out.print(" = " + individual.genes[m++]);
+            System.out.print("\n");
+        }
     }
 
     public static Individual clone(Individual individualToCopy) {
@@ -117,7 +143,7 @@ public class main {
             ruleBase[i].output = (int) individual.genes[m++];
         }
 
-        // Incremement if rule = condition from txt file
+        // Incremement if data is between rules
         for (int i = 0; i < dataSet.length; i++) {
             for (int j = 0; j < ruleBase.length; j++) {
                 if (matchesCondition(dataSet[i], ruleBase[j], dataSet[i].variables.length)) {
@@ -154,6 +180,10 @@ public class main {
             float second = rule.condition[++i];
             if (first < second) {
                 if (inputData.variables[k] > first && inputData.variables[k] < second) {
+                    match++;
+                }
+            } else {
+                if (inputData.variables[k] > second && inputData.variables[k] < first) {
                     match++;
                 }
             }

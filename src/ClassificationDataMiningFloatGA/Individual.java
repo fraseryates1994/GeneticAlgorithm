@@ -22,7 +22,7 @@ public class Individual {
 
     @Override
     public String toString() {
-        return "gene: " + Arrays.toString(genes) + " fitness = " + fitness;
+        return Arrays.toString(genes) + " fitness = " + fitness;
     }
 
 }

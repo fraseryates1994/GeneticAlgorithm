@@ -1,7 +1,5 @@
 package ClassificationDataMiningFloatGA;
 
-import ClassificationDataMiningBinaryGA.*;
-
 /**
  *
  * @author Fraser
