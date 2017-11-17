@@ -11,14 +11,14 @@ import java.util.Scanner;
  */
 public class main {
 
-    public static int populationSize = 600;
-    public static double mutationRate = 0.002;
+    public static int populationSize = 200;
+    public static double mutationRate = 0.005;
     public static double crossoverRate = 0.7;
     public static int totalFitness = 0;
     public static int iteration = 1;
-    public static int ruleSize = 5;
+    public static int ruleSize = 10;
     public static int dataSize = 1000;
-    public static int totalIterations = 1000;
+    public static int totalIterations = 5000;
     public static String trainingData = "data3.txt";
     public static String validationData = "data3validation.txt";
     public static Individual bestIndividual = new Individual();
@@ -36,6 +36,9 @@ public class main {
         printGenes(population);
 
         while (iteration < totalIterations) {
+            if (solutionFound(population)) {
+                break;
+            }
             tournamentSelection(population);
             evaluateFitness(population, dataSet);
             //crossover(population);
@@ -68,7 +71,7 @@ public class main {
         }
         return false;
     }
-    
+
     public static void setFittest(Individual individual) {
         if (individual.fitness > bestIndividual.fitness) {
             for (int i = 0; i < individual.geneSize; i++) {
@@ -77,7 +80,7 @@ public class main {
             bestIndividual.fitness = individual.fitness;
         }
     }
-    
+
     public static void seperateRules(Individual individual) {
         int m = 0;
         Rule[] ruleBase = new Rule[ruleSize];
@@ -200,45 +203,37 @@ public class main {
     public static void mutate(Individual[] population) {
         Random rand = new Random();
         Rule rule = new Rule();
-        boolean test = true;
         //mutation
         for (int i = 0; i != populationSize; ++i) {
             for (int j = 0; j != population[i].geneSize; ++j) {
-                if (j % (rule.conditionSize + 1) != (rule.conditionSize)) {
+                if (j % (rule.conditionSize + 1) != rule.conditionSize) {
                     if (mutationRate * 100 > rand.nextInt(101)) {
-                        while (true) {
-                            float mutateNum = rand.nextFloat();
-                            if ((population[i].genes[j] + mutateNum < 1)) {
-                                population[i].genes[j] = population[i].genes[j] + mutateNum;
-                                break;
-                            } else if (population[i].genes[j] - mutateNum > 0) {
-                                population[i].genes[j] = population[i].genes[j] - mutateNum;
-                                break;
-                            }
-                        }
+//                        while (true) {
+//                            float mutateNum = (rand.nextFloat());
+//                            if ((population[i].genes[j] + mutateNum < 1)) {
+//                                population[i].genes[j] = population[i].genes[j] + mutateNum;
+//                                break;
+//                            } else if (population[i].genes[j] - mutateNum > 0) {
+//                                population[i].genes[j] = population[i].genes[j] - mutateNum;
+//                                break;
+//                            }
+//                        }
+                        population[i].genes[j] = rand.nextFloat();
                     }
                 } else {
                     // mutate output
-                    if (population[i].genes[j] != 0 || population[i].genes[j] != 1) {
-                        if (Math.random() < 0.5) {
-                            population[i].genes[j] = 0;
-                        } else {
-                            population[i].genes[j] = 1;
-                        }
-                    }
+//                    if (population[i].genes[j] != 0 || population[i].genes[j] != 1) {
+//                        if (Math.random() < 0.5) {
+//                            population[i].genes[j] = 0;
+//                        } else {
+//                            population[i].genes[j] = 1;
+//                        }
+//                    }
                     if (mutationRate * 100 > rand.nextInt(101)) {
                         if (population[i].genes[j] == 1) {
-                            if (Math.random() < 0.5) {
-                                population[i].genes[j] = 0;
-                            } else {
-                                population[i].genes[j] = 1;
-                            }
+                            population[i].genes[j] = 0;
                         } else if (population[i].genes[j] == 0) {
-                            if (Math.random() < 0.5) {
-                                population[i].genes[j] = 0;
-                            } else {
-                                population[i].genes[j] = 1;
-                            }
+                            population[i].genes[j] = 1;
                         }
                     }
                 }
@@ -246,19 +241,19 @@ public class main {
         }
     }
 
-    public static void crossover(Individual population[]) {
-        Random rand = new Random();
-        for (int i = 0; i < populationSize; i = i + 2) {
-            if (Math.random() < crossoverRate) {
-                int split = rand.nextInt(population[i].geneSize);
-                for (int j = split; j < population[i].geneSize; j++) {
-                    int temp = population[i].genes[j];
-                    population[i].genes[j] = population[i + 1].genes[j];
-                    population[i + 1].genes[j] = temp;
-                }
-            }
-        }
-    }
+//    public static void crossover(Individual population[]) {
+//        Random rand = new Random();
+//        for (int i = 0; i < populationSize; i = i + 2) {
+//            if (Math.random() < crossoverRate) {
+//                int split = rand.nextInt(population[i].geneSize);
+//                for (int j = split; j < population[i].geneSize; j++) {
+//                    int temp = population[i].genes[j];
+//                    population[i].genes[j] = population[i + 1].genes[j];
+//                    population[i + 1].genes[j] = temp;
+//                }
+//            }
+//        }
+//    }
 
     public static void tournamentSelection(Individual population[]) {
         Individual offspring[] = new Individual[populationSize];

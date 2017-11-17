@@ -11,13 +11,13 @@ import java.util.Scanner;
 public class main {
 
     public static int populationSize = 1000;
-    public static double mutationRate = 0.025;
+    public static double mutationRate = 0.002;
     public static double crossoverRate = 0.7;
     public static int totalFitness = 0;
     public static int iteration = 1;
     public static int ruleSize = 5;
-    public static int dataSize = 64;
-    public static int totalIterations = 1000;
+    public static int dataSize = 32;
+    public static int totalIterations = 200;
     public static String data = "data2.txt";
 
     public static void main(String[] args) {
