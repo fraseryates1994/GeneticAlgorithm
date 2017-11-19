@@ -12,14 +12,14 @@ import java.util.Scanner;
 public class main {
 
     public static int populationSize = 200;
-    public static double mutationRate = 0.005;
+    public static double mutationRate = 0.002;
     public static double crossoverRate = 0.7;
     public static int totalFitness = 0;
     public static int iteration = 1;
     public static int ruleSize = 10;
-    public static int dataSize = 1000;
-    public static int totalIterations = 5000;
-    public static String trainingData = "data3.txt";
+    public static int dataSize = 2000;
+    public static int totalIterations = 20000;
+    public static String trainingData = "data3full.txt";
     public static String validationData = "data3validation.txt";
     public static Individual bestIndividual = new Individual();
 
@@ -29,7 +29,7 @@ public class main {
         Data validationDataSet[] = new Data[dataSize];
 
         dataSet = readData(trainingData);
-        validationDataSet = readData(validationData);
+        //validationDataSet = readData(validationData);
 
         initiate(population);
         evaluateFitness(population, dataSet);
@@ -48,11 +48,12 @@ public class main {
 
             Individual fittest = getFittest(population);
             setFittest(fittest);
-            Individual toValidate = clone(fittest);
-            evaluateIndFitness(toValidate, validationDataSet);
+            //Individual toValidate = clone(fittest);
+            //evaluateIndFitness(toValidate, validationDataSet);
 
-            System.out.println("Training Data  : Generation " + iteration + ". Fittest gene = " + fittest.fitness
-                    + "\nValidation Data: Generation " + iteration + ". fittest gene = " + toValidate.fitness);
+            //System.out.println("Training Data  : Generation " + iteration + ". Fittest gene = " + fittest.fitness
+            //        + "\nValidation Data: Generation " + iteration + ". fittest gene = " + toValidate.fitness);
+            System.out.println(fittest.fitness);
             iteration++;
         }
         // Print if solution is found
@@ -64,7 +65,7 @@ public class main {
 
     public static boolean solutionFound(Individual population[]) {
         for (int i = 0; i < populationSize; i++) {
-            if (population[i].fitness == 1000) {
+            if (population[i].fitness == 2000) {
                 System.out.println("Solution Found!");
                 return true;
             }
@@ -182,11 +183,11 @@ public class main {
             float first = rule.condition[i];
             float second = rule.condition[++i];
             if (first < second) {
-                if (inputData.variables[k] > first && inputData.variables[k] < second) {
+                if ((inputData.variables[k] > first && inputData.variables[k] < second) || inputData.variables[k] == 2) {
                     match++;
                 }
             } else {
-                if (inputData.variables[k] > second && inputData.variables[k] < first) {
+                if ((inputData.variables[k] > second && inputData.variables[k] < first) || inputData.variables[k] == 2) {
                     match++;
                 }
             }
@@ -208,6 +209,7 @@ public class main {
             for (int j = 0; j != population[i].geneSize; ++j) {
                 if (j % (rule.conditionSize + 1) != rule.conditionSize) {
                     if (mutationRate * 100 > rand.nextInt(101)) {
+                        if (Math.random() < 0.5) {
 //                        while (true) {
 //                            float mutateNum = (rand.nextFloat());
 //                            if ((population[i].genes[j] + mutateNum < 1)) {
@@ -219,6 +221,9 @@ public class main {
 //                            }
 //                        }
                         population[i].genes[j] = rand.nextFloat();
+                        } else {
+                            population[i].genes[j] = 2;
+                        }
                     }
                 } else {
                     // mutate output
