@@ -1,7 +1,6 @@
 
 package ClassificationDataMiningFloatGA;
 
-import ClassificationDataMiningBinaryGA.*;
 
 /**
  *

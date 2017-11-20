@@ -12,28 +12,30 @@ import java.util.Scanner;
 public class main {
 
     public static int populationSize = 200;
-    public static double mutationRate = 0.002;
+    public static double mutationRate = 0.01;
     public static double crossoverRate = 0.7;
     public static int totalFitness = 0;
-    public static int iteration = 1;
+    public static int iteration = 0;
     public static int ruleSize = 10;
     public static int dataSize = 2000;
-    public static int totalIterations = 20000;
+    public static int totalIterations = 10000;
     public static String trainingData = "data3full.txt";
     public static String validationData = "data3validation.txt";
     public static Individual bestIndividual = new Individual();
+    public static int mutationInterval = 1;
 
     public static void main(String[] args) {
         Individual population[] = new Individual[populationSize];
         Data dataSet[] = new Data[dataSize];
         Data validationDataSet[] = new Data[dataSize];
+        float[] validationFitness = new float[totalIterations];
 
         dataSet = readData(trainingData);
-        //validationDataSet = readData(validationData);
+        validationDataSet = readData(validationData);
 
         initiate(population);
         evaluateFitness(population, dataSet);
-        printGenes(population);
+        // printGenes(population);
 
         while (iteration < totalIterations) {
             if (solutionFound(population)) {
@@ -48,19 +50,26 @@ public class main {
 
             Individual fittest = getFittest(population);
             setFittest(fittest);
-            //Individual toValidate = clone(fittest);
-            //evaluateIndFitness(toValidate, validationDataSet);
+//            Individual toValidate = clone(fittest);
+//            evaluateIndFitness(toValidate, validationDataSet);
+//            validationFitness[iteration] = toValidate.fitness;
 
             //System.out.println("Training Data  : Generation " + iteration + ". Fittest gene = " + fittest.fitness
             //        + "\nValidation Data: Generation " + iteration + ". fittest gene = " + toValidate.fitness);
+            // System.out.println(fittest.fitness);
             System.out.println(fittest.fitness);
             iteration++;
         }
+//        System.out.println("Validation Data");
+//        for (int i = 0; i < validationFitness.length; i++) {
+//            System.out.println(validationFitness[i]);
+//        }
+
         // Print if solution is found
-        System.out.println("Generation = " + (iteration - 1));
-        System.out.println("Best Individual = " + bestIndividual.fitness);
-        System.out.println("Rules:");
-        seperateRules(bestIndividual);
+        // System.out.println("Generation = " + (iteration - 1));
+        // System.out.println("Best Individual = " + bestIndividual.fitness);
+        // System.out.println("Rules:");
+        // seperateRules(bestIndividual);
     }
 
     public static boolean solutionFound(Individual population[]) {
@@ -71,6 +80,10 @@ public class main {
             }
         }
         return false;
+    }
+
+    public static int calcError(Individual trainingFittest, Individual validationFittest) {
+        return trainingFittest.fitness - validationFittest.fitness;
     }
 
     public static void setFittest(Individual individual) {
@@ -201,44 +214,48 @@ public class main {
         return inputData.output == rule.output;
     }
 
+    public static void setMutationInterval() {
+        if (bestIndividual.fitness > 1900) {
+            mutationInterval = 10;
+        }
+    }
+
     public static void mutate(Individual[] population) {
         Random rand = new Random();
         Rule rule = new Rule();
+        setMutationInterval();
         //mutation
         for (int i = 0; i != populationSize; ++i) {
             for (int j = 0; j != population[i].geneSize; ++j) {
                 if (j % (rule.conditionSize + 1) != rule.conditionSize) {
-                    if (mutationRate * 100 > rand.nextInt(101)) {
-                        if (Math.random() < 0.5) {
-//                        while (true) {
-//                            float mutateNum = (rand.nextFloat());
-//                            if ((population[i].genes[j] + mutateNum < 1)) {
-//                                population[i].genes[j] = population[i].genes[j] + mutateNum;
-//                                break;
-//                            } else if (population[i].genes[j] - mutateNum > 0) {
-//                                population[i].genes[j] = population[i].genes[j] - mutateNum;
-//                                break;
+//                    if (mutationRate * 100 > rand.nextInt(101)) {
+                    if (rand.nextFloat() < mutationRate) {
+//                        if (bestIndividual.fitness < 1800) {
+//                            population[i].genes[j] = rand.nextFloat();
+//                        } else {
+//                            while (true) {
+//                                float r = rand.nextFloat() / 10;
+//                                if (population[i].genes[j] + r <= 1) {
+//                                    population[i].genes[j] = population[i].genes[j] + r;
+//                                    break;
+//                                } else if (population[i].genes[j] - r >= 0) {
+//                                    population[i].genes[j] = population[i].genes[j] - r;
+//                                    break;
+//                                }
 //                            }
 //                        }
-                        population[i].genes[j] = rand.nextFloat();
+                        if (rand.nextFloat() < 0.5) {
+                            population[i].genes[j] = rand.nextFloat();
                         } else {
                             population[i].genes[j] = 2;
                         }
-                    }
-                } else {
-                    // mutate output
-//                    if (population[i].genes[j] != 0 || population[i].genes[j] != 1) {
-//                        if (Math.random() < 0.5) {
-//                            population[i].genes[j] = 0;
-//                        } else {
-//                            population[i].genes[j] = 1;
-//                        }
-//                    }
-                    if (mutationRate * 100 > rand.nextInt(101)) {
-                        if (population[i].genes[j] == 1) {
-                            population[i].genes[j] = 0;
-                        } else if (population[i].genes[j] == 0) {
-                            population[i].genes[j] = 1;
+                    } else {
+                        if (rand.nextFloat() < mutationRate) {
+                            if (population[i].genes[j] == 1) {
+                                population[i].genes[j] = 0;
+                            } else if (population[i].genes[j] == 0) {
+                                population[i].genes[j] = 1;
+                            }
                         }
                     }
                 }
@@ -246,20 +263,19 @@ public class main {
         }
     }
 
-//    public static void crossover(Individual population[]) {
-//        Random rand = new Random();
-//        for (int i = 0; i < populationSize; i = i + 2) {
-//            if (Math.random() < crossoverRate) {
-//                int split = rand.nextInt(population[i].geneSize);
-//                for (int j = split; j < population[i].geneSize; j++) {
-//                    int temp = population[i].genes[j];
-//                    population[i].genes[j] = population[i + 1].genes[j];
-//                    population[i + 1].genes[j] = temp;
-//                }
-//            }
-//        }
-//    }
-
+    //    public static void crossover(Individual population[]) {
+    //        Random rand = new Random();
+    //        for (int i = 0; i < populationSize; i = i + 2) {
+    //            if (Math.random() < crossoverRate) {
+    //                int split = rand.nextInt(population[i].geneSize);
+    //                for (int j = split; j < population[i].geneSize; j++) {
+    //                    int temp = population[i].genes[j];
+    //                    population[i].genes[j] = population[i + 1].genes[j];
+    //                    population[i + 1].genes[j] = temp;
+    //                }
+    //            }
+    //        }
+    //    }
     public static void tournamentSelection(Individual population[]) {
         Individual offspring[] = new Individual[populationSize];
         Random rand = new Random();

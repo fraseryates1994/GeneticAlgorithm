@@ -10,7 +10,7 @@ import java.util.Arrays;
  */
 public class Individual {
 
-    public int geneSize = 60;
+    public int geneSize = 70;
     int genes[];
     int fitness;
 
@@ -21,7 +21,7 @@ public class Individual {
 
     @Override
     public String toString() {
-        return "gene: " + Arrays.toString(genes) + " fitness = " + fitness;
+        return Arrays.toString(genes) + " fitness = " + fitness;
     }
 
 }

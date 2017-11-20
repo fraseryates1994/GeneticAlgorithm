@@ -10,15 +10,16 @@ import java.util.Scanner;
  */
 public class main {
 
-    public static int populationSize = 1000;
-    public static double mutationRate = 0.002;
+    public static int populationSize = 600;
+    public static double mutationRate = 0.008;
     public static double crossoverRate = 0.7;
     public static int totalFitness = 0;
     public static int iteration = 1;
-    public static int ruleSize = 5;
-    public static int dataSize = 32;
-    public static int totalIterations = 200;
+    public static int ruleSize = 10;
+    public static int dataSize = 64;
+    public static int totalIterations = 10000;
     public static String data = "data2.txt";
+    public static Individual bestIndividual = new Individual();
 
     public static void main(String[] args) {
         Individual population[] = new Individual[populationSize];
@@ -28,7 +29,7 @@ public class main {
         
         initiate(population);
         evaluateFitness(population, dataSet);
-        printGenes(population);
+        // printGenes(population);
 
         while (iteration < totalIterations) {
             if (solutionFound(population)) {
@@ -41,14 +42,38 @@ public class main {
             mutate(population);
             evaluateFitness(population, dataSet);
 
-            // Print most fit individual
-            System.out.println("Generation " + iteration + ". Fittest gene = " + getFittest(population).fitness);
+            // Print most fit 
+            setFittest(getFittest(population));
+            //System.out.println("Generation " + iteration + ". Fittest gene = " + getFittest(population).fitness);
+            System.out.println(getFittest(population).fitness);
             iteration++;
         }
         // Print when solution has been found
         System.out.println("Generation = " + (iteration - 1));
-        System.out.println("Best Individual = " + getFittest(population));
-        //seperateRules(population);
+        System.out.println("Best Individual = " + bestIndividual);
+        seperateRules(bestIndividual);
+    }
+    
+    public static void setFittest(Individual individual) {
+        if (individual.fitness > bestIndividual.fitness) {
+            for (int i = 0; i < individual.geneSize; i++) {
+                bestIndividual.genes[i] = individual.genes[i];
+            }
+            bestIndividual.fitness = individual.fitness;
+        }
+    }
+    
+    public static void seperateRules(Individual individual) {
+        int m = 0;
+        Rule[] ruleBase = new Rule[ruleSize];
+        for (int i = 0; i < ruleSize; i++) {
+            ruleBase[i] = new Rule();
+            for (int j = 0; j < ruleBase[i].conditionSize; j++) {
+                System.out.print(individual.genes[m++] + " ");
+            }
+            System.out.print(" = " + individual.genes[m++]);
+            System.out.print("\n");
+        }
     }
 
     public static boolean solutionFound(Individual population[]) {
@@ -159,7 +184,7 @@ public class main {
         for (int i = 0; i != populationSize; ++i) {
             for (int j = 0; j != population[i].geneSize; ++j) {
                 if (j % (rule.conditionSize + 1) != (rule.conditionSize)) {
-                    if (mutationRate * 100 > rand.nextInt(101)) {
+                    if (rand.nextFloat() <= mutationRate) {
                         switch (population[i].genes[j]) {
                             case 0:
                                 if (Math.random() < 0.5) {
@@ -195,7 +220,7 @@ public class main {
                             population[i].genes[j] = 1;
                         }
                     }
-                    if (mutationRate * 100 > rand.nextInt(101)) {
+                    if (rand.nextFloat() <= mutationRate) {
                         if (population[i].genes[j] == 1) {
                             if (Math.random() < 0.5) {
                                 population[i].genes[j] = 0;
