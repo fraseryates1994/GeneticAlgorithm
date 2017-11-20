@@ -1,5 +1,6 @@
 package ClassificationDataMiningFloatGA;
 
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Random;
@@ -11,12 +12,12 @@ import java.util.Scanner;
  */
 public class main {
 
-    public static int populationSize = 200;
+    public static int populationSize = 1000;
     public static double mutationRate = 0.01;
     public static double crossoverRate = 0.7;
     public static int totalFitness = 0;
     public static int iteration = 0;
-    public static int ruleSize = 10;
+    public static int ruleSize = 5;
     public static int dataSize = 2000;
     public static int totalIterations = 10000;
     public static String trainingData = "data3full.txt";
@@ -31,7 +32,7 @@ public class main {
         float[] validationFitness = new float[totalIterations];
 
         dataSet = readData(trainingData);
-        validationDataSet = readData(validationData);
+        // validationDataSet = readData(validationData);
 
         initiate(population);
         evaluateFitness(population, dataSet);
@@ -50,13 +51,12 @@ public class main {
 
             Individual fittest = getFittest(population);
             setFittest(fittest);
-//            Individual toValidate = clone(fittest);
-//            evaluateIndFitness(toValidate, validationDataSet);
-//            validationFitness[iteration] = toValidate.fitness;
+            //Individual toValidate = clone(fittest);
+            //evaluateIndFitness(toValidate, validationDataSet);
+            //validationFitness[iteration] = toValidate.fitness;
 
             //System.out.println("Training Data  : Generation " + iteration + ". Fittest gene = " + fittest.fitness
             //        + "\nValidation Data: Generation " + iteration + ". fittest gene = " + toValidate.fitness);
-            // System.out.println(fittest.fitness);
             System.out.println(fittest.fitness);
             iteration++;
         }
@@ -69,7 +69,7 @@ public class main {
         // System.out.println("Generation = " + (iteration - 1));
         // System.out.println("Best Individual = " + bestIndividual.fitness);
         // System.out.println("Rules:");
-        // seperateRules(bestIndividual);
+        seperateRules(bestIndividual);
     }
 
     public static boolean solutionFound(Individual population[]) {
@@ -98,10 +98,12 @@ public class main {
     public static void seperateRules(Individual individual) {
         int m = 0;
         Rule[] ruleBase = new Rule[ruleSize];
+        DecimalFormat df = new DecimalFormat();
+        df.setMaximumFractionDigits(3);
         for (int i = 0; i < ruleSize; i++) {
             ruleBase[i] = new Rule();
             for (int j = 0; j < ruleBase[i].conditionSize; j++) {
-                System.out.print(individual.genes[m++] + " ");
+                System.out.print(df.format(individual.genes[m++]) + " ");
             }
             System.out.print(" = " + individual.genes[m++]);
             System.out.print("\n");
