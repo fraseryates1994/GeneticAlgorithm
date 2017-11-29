@@ -10,7 +10,7 @@ import java.util.Scanner;
  */
 public class main {
 
-    public static int populationSize = 600;
+    public static int populationSize = 1000;
     public static double mutationRate = 0.008;
     public static double crossoverRate = 0.7;
     public static int totalFitness = 0;
@@ -26,16 +26,17 @@ public class main {
         Data dataSet[] = new Data[dataSize];
 
         dataSet = readData();
-        
+
         initiate(population);
         evaluateFitness(population, dataSet);
-        // printGenes(population);
+        printGenes(population);
 
         while (iteration < totalIterations) {
             if (solutionFound(population)) {
                 break;
             }
             tournamentSelection(population);
+            // rouletteSelection(population);
             evaluateFitness(population, dataSet);
             crossover(population);
             evaluateFitness(population, dataSet);
@@ -53,7 +54,7 @@ public class main {
         System.out.println("Best Individual = " + bestIndividual);
         seperateRules(bestIndividual);
     }
-    
+
     public static void setFittest(Individual individual) {
         if (individual.fitness > bestIndividual.fitness) {
             for (int i = 0; i < individual.geneSize; i++) {
@@ -62,7 +63,7 @@ public class main {
             bestIndividual.fitness = individual.fitness;
         }
     }
-    
+
     public static void seperateRules(Individual individual) {
         int m = 0;
         Rule[] ruleBase = new Rule[ruleSize];
@@ -146,11 +147,12 @@ public class main {
             }
         }
     }
-    
-    public static Data[] readData(){
+
+    public static Data[] readData() {
         // Read from txt files
         Data dataSet[] = new Data[dataSize];
-        Scanner scan = new Scanner(main.class.getResourceAsStream(data));
+        Scanner scan = new Scanner(main.class
+                .getResourceAsStream(data));
         scan.useDelimiter("");
         for (int i = 0; scan.hasNext(); i++) {
             dataSet[i] = new Data();
@@ -251,6 +253,32 @@ public class main {
                     population[i + 1].genes[j] = temp;
                 }
             }
+        }
+    }
+    
+    public static void rouletteSelection(Individual[] population) {
+        Random rand = new Random();
+        Individual offspring[] = new Individual[populationSize];
+
+        for (Individual individual : population) {
+            totalFitness += individual.fitness;
+        }
+
+        for (int i = 0; i < populationSize; i++) {
+            offspring[i] = new Individual();
+        }
+
+        for (int i = 0; i < populationSize; i++) {
+            int stopped = rand.nextInt(totalFitness);
+
+            int j = 0;
+            for (j = 0; j < populationSize; j++) {
+                stopped = stopped - population[j].fitness;
+                if (stopped <= 0) {
+                    break;
+                }
+            }
+            offspring[i] = population[j];
         }
     }
 
